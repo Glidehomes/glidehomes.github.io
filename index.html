@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlideHomes - Real Estate Agent in Nigeria</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f8f9fa;color:#222}
+header{background:#0f2a3d;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
+header b{font-size:20px} header b span{color:#ffb703}
+nav a{color:#fff;text-decoration:none;margin-left:12px;font-size:14px}
+.btn{background:#ffb703;color:#000;padding:8px 14px;border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px}
+.hero{background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200');background-size:cover;background-position:center;color:#fff;text-align:center;padding:70px 18px}
+.hero h1{font-size:32px;line-height:1.2} .hero p{margin:14px 0 22px;opacity:.9}
+.search{background:#fff;padding:12px;border-radius:12px;display:flex;gap:8px;max-width:600px;margin:0 auto}
+.search input{flex:1;border:1px solid #ddd;padding:12px;border-radius:8px;outline:none}
+.search button{background:#ffb703;border:0;padding:12px 16px;border-radius:8px;font-weight:bold}
+.section{padding:28px 18px;max-width:1100px;margin:auto}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.card img{width:100%;height:150px;object-fit:cover}
+.card div{padding:12px} .price{color:#0f2a3d;font-weight:bold;font-size:18px}
+footer{background:#0f2a3d;color:#fff;text-align:center;padding:20px;font-size:13px}
+@media(max-width:600px){.grid{grid-template-columns:1fr} nav a{display:none} .hero h1{font-size:26px}}
+</style>
+</head>
+<body>
+<header><b>Glide<span>Homes</span></b><nav><a href="#">Buy</a><a href="#">Rent</a><a href="login.html">Login</a> <a class="btn" href="signup.html">Sign Up</a></nav></header>
+
+<section class="hero">
+<h1>Find Your Dream Home in Nigeria</h1>
+<p>Verified houses, lands & apartments in Lagos, Abuja & Port Harcourt</p>
+<div class="search"><input placeholder="Search Lekki, Abuja, Ikeja..."><button>Search</button></div>
+</section>
+
+<section class="section"><h2>Featured Properties</h2><br><div class="grid">
+<div class="card"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"><div><div class="price">₦250,000,000</div><p>4 Bedroom Duplex - Lekki, Lagos</p></div></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"><div><div class="price">₦120,000,000</div><p>5 Bedroom Detached - Abuja</p></div></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800"><div><div class="price">₦85,000,000</div><p>3 Bedroom Apartment - Ikeja, Lagos</p></div></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800"><div><div class="price">₦45,000,000</div><p>Full Plot Land - Epe, Lagos</p></div></div>
+</div></section>
+
+<footer>© 2026 GlideHomes - Nigeria's Trusted Real Estate Platform<br>WhatsApp: 0900 000 0000 | hello@glidehomes.com</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://plhvtenxcuihgldxwcrw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Y0TYPZEWeRswrKu88TE4sg_0S5-uMJO";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+</body>
+                    </html>
