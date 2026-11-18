@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - GlideHomes</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f8f9fa}header{background:#0f2a3d;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}header b span{color:#ffb703}.box{max-width:800px;margin:20px auto;padding:0 16px}.card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:14px}input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px;outline:none}button{background:#ffb703;border:0;padding:12px 16px;border-radius:10px;font-weight:bold;cursor:pointer;width:100%}.logout{background:#eee}.prop{display:flex;gap:12px}.prop img{width:100px;height:80px;object-fit:cover;border-radius:8px}a{color:#fff;text-decoration:none}</style>
+</head>
+<body>
+<header><b>Glide<span>Homes</span> Dashboard</b><a href="#" onclick="doLogout()">Logout</a></header>
+
+<div class="box">
+<div class="card"><h3>Welcome, <span id="userEmail">...</span></h3><p id="userRole" style="color:#666;font-size:14px;margin-top:4px"></p></div>
+
+<div class="card"><h3>Add New Property</h3><br>
+<input id="title" placeholder="e.g. 4 Bedroom Duplex - Lekki">
+<input id="price" type="number" placeholder="Price e.g. 250000000">
+<input id="location" placeholder="Location e.g. Lekki, Lagos">
+<select id="type"><option value="Buy">For Sale</option><option value="Rent">For Rent</option><option value="Land">Land</option></select>
+<input id="image" placeholder="Image Link (paste Unsplash link)">
+<button onclick="addProperty()">Post Property</button>
+<p id="msg" style="text-align:center;margin-top:8px"></p>
+</div>
+
+<div class="card"><h3>My Properties</h3><br><div id="list">Loading...</div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://plhvtenxcuihgldxwcrw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Y0TYPZEWeRswrKu88TE4sg_0S5-uMJO";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentUser=null;
+
+async function checkUser(){
+  const {data}=await supabaseClient.auth.getSession();
+  if(!data.session){ window.location.href="login.html"; return; }
+  currentUser=data.session.user;
+  document.getElementById('userEmail').innerText=currentUser.email;
+  document.getElementById('userRole').innerText="Role: "+(currentUser.user_metadata?.role||"user");
+  loadProps();
+}
+async function addProperty(){
+  const title=document.getElementById('title').value;
+  const price=document.getElementById('price').value;
+  const location=document.getElementById('location').value;
+  const type=document.getElementById('type').value;
+  const image=document.getElementById('image').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800";
+  if(!title||!price){document.getElementById('msg').innerText="Fill title and price";return;}
+  const {error}=await supabaseClient.from('properties').insert([{title,price:parseFloat(price),location,type,image_url:image,user_id:currentUser.id}]);
+  if(error){document.getElementById('msg').innerText=error.message;}
+  else{document.getElementById('msg').innerText="Property posted!";loadProps();}
+}
+async function loadProps(){
+  const {data}=await supabaseClient.from('properties').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  const list=document.getElementById('list');
+  if(!data||data.length===0){list.innerHTML="No properties yet. Add one above.";return;}
+  list.innerHTML=data.map(p=>`<div class="prop" style="margin-bottom:12px"><img src="${p.image_url}"><div><b>${p.title}</b><br>₦${Number(p.price).toLocaleString()} - ${p.location||''}<br><small>${p.type}</small></div></div>`).join('');
+}
+async function doLogout(){ await supabaseClient.auth.signOut(); window.location.href="login.html"; }
+checkUser();
+</script>
+</body>
+  </html>
