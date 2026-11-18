@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - GlideHomes</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#0f2a3d;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:16px}.box{background:#fff;width:100%;max-width:420px;padding:26px;border-radius:14px}h1{text-align:center;color:#0f2a3d}h1 span{color:#ffb703}p{text-align:center;color:#666;font-size:14px;margin:8px 0 18px}input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;margin-bottom:12px;outline:none}button{width:100%;padding:13px;background:#ffb703;border:0;border-radius:10px;font-weight:bold;font-size:16px;cursor:pointer}a{color:#0f2a3d;text-decoration:none;font-weight:bold}#msg{text-align:center;margin-top:10px;font-size:14px;color:red}</style>
+</head>
+<body>
+<div class="box">
+<h1>Glide<span>Homes</span></h1>
+<p>Welcome back, login to continue</p>
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="doLogin()">Login</button>
+<p id="msg"></p>
+<p>No account? <a href="signup.html">Create Account</a></p>
+<p><a href="index.html">← Back to Home</a></p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://plhvtenxcuihgldxwcrw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Y0TYPZEWeRswrKu88TE4sg_0S5-uMJO";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function doLogin(){
+  const email=document.getElementById('email').value;
+  const password=document.getElementById('password').value;
+  const msg=document.getElementById('msg');
+  if(!email||!password){msg.innerText="Fill email and password";return;}
+  msg.style.color="black"; msg.innerText="Logging in...";
+  const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error){msg.style.color="red";msg.innerText=error.message;return;}
+  // Check role
+  const role = data.user.user_metadata?.role || "user";
+  msg.style.color="green"; msg.innerText="Login success! Redirecting...";
+  setTimeout(()=>{
+    if(role==="admin"){ window.location.href="admin.html"; }
+    else { window.location.href="dashboard.html"; }
+  },1000);
+}
+</script>
+</body>
+</html>
