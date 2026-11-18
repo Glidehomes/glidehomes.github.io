@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - GlideHomes</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f8f9fa}header{background:#0f2a3d;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}header b span{color:#ffb703}.box{max-width:900px;margin:20px auto;padding:0 16px}.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}.stat{background:#fff;padding:16px;border-radius:12px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.08)}.stat b{font-size:24px;color:#0f2a3d}.card{background:#fff;padding:16px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:12px}.prop{display:flex;gap:12px;align-items:center}.prop img{width:90px;height:70px;object-fit:cover;border-radius:8px}button{padding:8px 12px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}.del{background:#ff4d4d;color:#fff}a{color:#fff;text-decoration:none}@media(max-width:600px){.stats{grid-template-columns:1fr}}</style>
+</head>
+<body>
+<header><b>Glide<span>Homes</span> Admin</b><a href="#" onclick="doLogout()">Logout</a></header>
+
+<div class="box">
+<div class="stats">
+<div class="stat"><b id="totalProps">0</b><br>Total Properties</div>
+<div class="stat"><b id="totalSale">0</b><br>For Sale</div>
+<div class="stat"><b id="totalRent">0</b><br>For Rent</div>
+</div>
+
+<div class="card"><h3>All Properties on GlideHomes</h3><p style="font-size:13px;color:#666;margin-top:4px">You can delete any property here</p><br><div id="list">Loading...</div></div>
+<div class="card"><a href="dashboard.html" style="color:#0f2a3d;font-weight:bold;text-decoration:none">→ Go to My Dashboard</a> &nbsp; | &nbsp; <a href="index.html" style="color:#0f2a3d;font-weight:bold;text-decoration:none">→ View Homepage</a></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://plhvtenxcuihgldxwcrw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Y0TYPZEWeRswrKu88TE4sg_0S5-uMJO";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function checkAdmin(){
+  const {data}=await supabaseClient.auth.getSession();
+  if(!data.session){ window.location.href="login.html"; return; }
+  if(data.session.user.user_metadata?.role!=="admin"){
+    alert("You are not admin. Redirecting to dashboard.");
+    window.location.href="dashboard.html"; return;
+  }
+  loadAll();
+}
+async function loadAll(){
+  const {data}=await supabaseClient.from('properties').select('*').order('created_at',{ascending:false});
+  document.getElementById('totalProps').innerText=data?.length||0;
+  document.getElementById('totalSale').innerText=data?.filter(p=>p.type==="Buy").length||0;
+  document.getElementById('totalRent').innerText=data?.filter(p=>p.type==="Rent").length||0;
+  const list=document.getElementById('list');
+  if(!data||data.length===0){list.innerHTML="No properties yet.";return;}
+  list.innerHTML=data.map(p=>`<div class="prop" style="margin-bottom:14px"><img src="${p.image_url}"><div style="flex:1"><b>${p.title}</b><br>₦${Number(p.price).toLocaleString()} - ${p.location||''}<br><small>${p.type}</small></div><button class="del" onclick="deleteProp(${p.id})">Delete</button></div>`).join('');
+}
+async function deleteProp(id){
+  if(!confirm("Delete this property?")) return;
+  await supabaseClient.from('properties').delete().eq('id',id);
+  loadAll();
+}
+async function doLogout(){ await supabaseClient.auth.signOut(); window.location.href="login.html"; }
+checkAdmin();
+</script>
+</body>
+  </html>
